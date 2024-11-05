@@ -10,20 +10,25 @@
 int main() {
 
 	struct User * users = NULL;
-	int user_count = load_users("users.txt", &users);
 
+//carhger les users
+	int user_count = load_users("users.csv", &users);
 	if (user_count < 0) {
-		return EXIT_FAILURE; //erreur lors du chargement des users
+		fprintf(stderr, "EROOR CHARGEMENT DEPUIS users.csv\n"); //erreur lors du chargement des users
+		return EXIT_FAILURE;
 	}
 
+
 	printf("Nombre d'users charge : %d\n", user_count);
-	display_users(users, user_count);
+
+// aficher les users si chargé
+	if (user_count > 0) {
+		display_users(users, user_count);
+	} else {
+		printf("aucun userstrouver dans le fichier CSV\n");
+	}
 
 	free(users); // libérer la memoire allouée pour les users
 	return EXIT_SUCCESS;
-
-
-
-	// appeler les fonctions de db.c quand elles seront pretes
-	return 0;
+	
 }

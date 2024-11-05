@@ -1,12 +1,16 @@
+
 // db.c - fonction pour gérer la bdd
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "db.h"
 
+#define MAX_USERS 100 // Ajuste la taille max des users selon besoin
 //implémenter les fonctions de gestion de bdd ici
 
 //fonction pour charger les users depuis un fichier
+
+
 int load_users(const char *filename, struct User **users) {
 	FILE *file = fopen(filename, "r");
 	if (!file) {
@@ -14,15 +18,17 @@ int load_users(const char *filename, struct User **users) {
 		return -1;
 	}
 
-	int count = 0;
-	*users = malloc(sizeof(struct User) * 100); //allouer la mémoire pour 100 utilisateurs
-	if (!*users){
+	//int count = 0;
+	*users = malloc(sizeof(struct User) * MAX_USERS); //allouer la mémoire pour 100 utilisateurs
+	if (!*users) {
 		perror("Failed to allocate memory");
 		fclose(file);
 		return -1;
 	}
-
-	while (fscanf(file, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",
+	
+	int count = 0;
+	
+	while (fscanf(file, "49%[^,],%49[^,],%19[^,],%14[^,],%49[^,],%10[^,],%99[^,],%49[^\n]\n",
 			(*users)[count].name,
 			(*users)[count].surname,
 			(*users)[count].phone,
@@ -30,12 +36,15 @@ int load_users(const char *filename, struct User **users) {
 			(*users)[count].city,
 			(*users)[count].date_of_birth,
 			(*users)[count].email,
-			(*users)[count].job_title) ==8){
+			(*users)[count].job_title) == 8) {
 
+		printf("users chargé : %s %s\n",(*users)[count].name, (*users)[count].surname);
 		count++;
-		if (count % 100 == 0) {
-			*users = realloc(*users, sizeof(struct User) * (count + 100)); // reallouer memoire si besoin
+
+		if (count >= MAX_USERS) {
+			break;
 		}
+
 	}
 
 	fclose(file);
@@ -59,3 +68,4 @@ void display_users(struct User *users, int count) {
 	}
 
 }
+
