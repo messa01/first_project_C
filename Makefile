@@ -1,26 +1,21 @@
-# nom de compilateur
+#variable de compilation
 CC = gcc
+CFLAGS = -Wall -Wextra -g
+#SRCS = main.c db.c
+#OBJS = $(SRCS:.c=.o)
+#EXEC = c_programm
+#cible finale
 
-#options de compilation
-CFLAGS = -Wall -g
+all: main
 
-#fichiers sources et exécutables
-SRCS = main.c db.c
-OBJS = $(SRCS:.c=.o)
-EXEC = c_program
+main: main.o bd.o
+	$(CC) $(CFLAGS) -o main main.o bd.o
 
-#règle par défaut (compile tout)
-all: $(EXEC)
+main.o: main.c bd.h
+	$(CC) $(CFLAGS) -c main.c
 
-#comment contruire l'executable
-$(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS)
+bd.o: bd.c bd.h
+	$(CC) $(CFLAGS) -c bd.c
 
-#comment compiler les fichiers.c en fichiers .o
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-#nettoyage des fichiers objets et de l'executable
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f *.o main
