@@ -25,8 +25,8 @@ Le programme propose à la fois une interface **menu interactif** et des **comma
 
 
  ## *2.2 Commandes en Ligne de commande*
- - **Insertion : ./main insert <name> <surname> <age> <gender> <job> <phone>
- - **Recherche avancée: ./main search <criterion> <value>
+ - **Insertion : ./main insert name surnam age gender job phone
+ - **Recherche avancée: ./main search criterion value
  - ** Tests automatiques[test insertion, suppression en utilisant test_users.csv]: .\main test
 
 ## **Fonctionnalités**
