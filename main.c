@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "bd.h"
+
+void runTests();
 
 void afficherMenu() {
 	printf("\nMenu :\n");
@@ -11,7 +14,7 @@ void afficherMenu() {
 	printf("3. Update a record\n");
 	printf("4. Search for a record\n");
 	printf("5. Display all records\n");
-//	printf("6. Load records from CSV\n");
+	printf("6. Advanced search by criterion\n");
 	printf("7. Display tree structure (graphical)\n");
 	printf("0. Quit\n");
 }
@@ -22,6 +25,58 @@ int main(int argc, char* argv[]) {
 	//construire automatiquement l'arbre a partir de user.csv
 	construireArbreDepuisCSV(&racine, "user.csv");
 
+
+	//gerer les commandes en ligne de commande
+	if (argc > 1) {
+		if (strcmp(argv[1], "test") == 0) {
+			runTests();
+			return 0;
+			//vérifier qu'il y a sufisiamment d'arguments pour un insert
+		}else if (strcmp(argv[1], "insert") == 0){
+			if (argc != 8){
+				printf("Usage: %s insert <name> <surname> <age> <gender> <job> <phone>\n", argv[0]);
+				return 1;
+			}
+
+			//récuperer les données de l'user
+			Enregistrement e;
+			strncpy(e.name, argv[2], sizeof(e.name) -1);
+			strncpy(e.surnam, argv[3], sizeof(e.surnam) -1);
+			e.age = atoi(argv[4]); // conversion en entier
+			strncpy(e.gender, argv[5], sizeof(e.gender) -1);
+			strncpy(e.job, argv[6], sizeof(e.job) -1);
+			strncpy(e.phone, argv[7], sizeof(e.phone) -1);
+
+			//inserer dans l'arbre
+			racine = insererNoeud(racine, e);
+
+			//sauvegarder dans le fichier CSV
+			sauvegarderDansCSV(racine, "user.csv");
+
+			printf("Record inserted: %s %s, %d, %s, %s, %s\n",
+				e.name, e.surnam, e.age, e.gender, e.job, e.phone);
+			return 0;
+		}
+		else if (strcmp(argv[1], "search") == 0) {
+			if (argc != 4) {
+				printf("usage: %s search <criterion> <value>_n", argv[0]);
+				return 1;
+			}
+
+			const char* critere = argv[2];
+			const char* valeur = argv[3];
+
+			printf("Resuls marching %s = %s:\n", critere, valeur);
+			rechercherParCritere(racine, critere, valeur);
+			return 0;
+		} else {
+			printf("unknown command. available commands: test, insert, search\n");
+			return 1;
+		}
+
+	}
+
+// si aucun arg, continuer avec le menu interactif
 	int choix;
 
 	do {
@@ -86,14 +141,16 @@ int main(int argc, char* argv[]) {
 			case 5:
 				afficherArbre(racine);
 				break;
-		//	case 6: {
-		//		char chemin[100];
-		//		printf("Entrer CSV file path: ");
-		//		scanf("%s", chemin);
+			case 6: 
+				char critere[20], valeur[50];
+				printf("Entrer the search criterion (name, surnam, job, gender): ");
+				scanf("%s", critere);
+				printf("Entrer the value to search for: ");
+				scanf("%s", valeur);
 
-		//		chargerCSV(&racine, chemin); // charge le csv
-		//		break;
-		//	}
+				printf("Resuls matching !!!!!!! %s = %s:\n", critere, valeur);
+				rechercherParCritere(racine, critere, valeur);
+				break;
 			case 7:
 				if(racine == NULL) {
 					printf("arbre vide.\n");
@@ -112,4 +169,33 @@ int main(int argc, char* argv[]) {
 
 	libererArbre(racine);
 	return 0;
+}
+
+void runTests() {
+	printf("Running tst...\n");
+
+	Noeud* racine = NULL;
+
+	construireArbreDepuisCSV(&racine, "test_users.csv");
+	
+//verification
+	assert(rechercherNoeud(racine, "TestUser1") != NULL);
+	assert(rechercherNoeud(racine, "TestUser2") != NULL);
+	printf("csv loading tests passed!!!!!!!\n");
+
+//insertion
+	Enregistrement nouveau = {"TestUser3", "Gamma", 40, "pan", "Scientist", "3333333333"};
+	racine = insererNoeud(racine, nouveau);
+	assert(rechercherNoeud(racine, "TestUser3") != NULL);
+	printf("INsertion tests passed\n");
+
+// supressions
+racine = supprimerNoeud(racine, "TestUser2");
+assert(rechercherNoeud(racine, "TestUser2") == NULL);
+printf("deletion tests passed\n");
+
+// test
+	libererArbre(racine);
+
+	printf("All tests passed sucessssssfully !_n");
 }

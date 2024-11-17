@@ -3,21 +3,51 @@
 #include <string.h>
 #include "bd.h"
 
-//
+
+//recherhce avance
+void rechercherParCritere(Noeud* racine, const char* critere, const char* valeur) {
+	if (racine == NULL) return;
+
+	rechercherParCritere(racine->gauche, critere, valeur);
+
+	if ((strcmp(critere, "name") == 0 && strcmp(racine->data.name, valeur) == 0) ||
+		(strcmp(critere, "surnam") == 0 && strcmp(racine->data.surnam, valeur) == 0) ||
+		(strcmp(critere, "job") == 0 && strcmp(racine->data.job, valeur) == 0) ||
+		(strcmp(critere, "gender") == 0 && strcmp(racine->data.gender, valeur) == 0)) {
+
+		printf("%s %s, %d, %s, %s, %s\n",
+			racine->data.name,
+			racine->data.surnam,
+			racine->data.age,
+			racine->data.gender,
+			racine->data.job,
+			racine->data.phone);
+		}
+
+		rechercherParCritere(racine->droite, critere, valeur);
+}
+
+
+//affiche noeud et sous arbre graphiquement
 void afficherArbreGraphique(Noeud* racine, int niveau) {
 	if (racine == NULL) return;
 
-	//affciher l sous arbre droit avec indentation augmente
+	//sous arbre droit avec niveau +1
 	afficherArbreGraphique(racine->droite, niveau + 1);
 
-	//indenter pour visualiser la hierarchie
+	//indenter pour hierarchie
 	for (int i = 0; i < niveau; i++) {
-		printf("   ");//trois espaces par  niveau
+		printf("      ");//5 espaces par  niveau
 	}
 
-	//aficher les données du noeud 
-	printf("%s\n", racine->data.name);
-
+	printf("|-- %s %s (Age: %d, gender: %s, Job: %s, phone: %s)\n",
+		racine->data.name,
+		racine->data.surnam,
+		racine->data.age,
+		racine->data.gender,
+		racine->data.job,
+		racine->data.phone);
+		
 	//afficher e sous arbre gauche avec indentation augmentee
 	afficherArbreGraphique(racine->gauche, niveau + 1);
 }
