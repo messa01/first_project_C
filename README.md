@@ -1,4 +1,4 @@
-## **Description du Projet**
+## **Description du Projet - DUBOIS Messaline - 3SI1**
 
 Ce projet est une application écrite en C qui permet de gérer une base de données simple d'utilisateurs à l'aide d'un **arbre binaire de recherche** (ABR).  
 Les données (nom, prénom, âge, genre, métier, téléphone) sont stockées dans un fichier CSV nommé **`user.csv`**, garantissant la persistance entre les sessions.
